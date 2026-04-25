@@ -1,0 +1,168 @@
+@baseUrl = http://127.0.0.1:8000
+@json = application/json
+
+### Health
+GET {{baseUrl}}/
+
+### ======================================================
+### 1) Identidad y Acceso
+### ======================================================
+
+### Crear rol
+POST {{baseUrl}}/roles/
+Content-Type: {{json}}
+
+{
+  "nombre": "admin",
+  "descripcion": "Administrador",
+  "activo": true
+}
+
+### Crear usuario
+POST {{baseUrl}}/usuarios/
+Content-Type: {{json}}
+
+{
+  "rol_id": 1,
+  "nombre": "Mora",
+  "apellido": "Front",
+  "email": "mora.front@example.com",
+  "password": "secret123",
+  "activo": true
+}
+
+### Login
+POST {{baseUrl}}/auth/login
+Content-Type: {{json}}
+
+{
+  "email": "mora.front@example.com",
+  "password": "secret123"
+}
+
+### Listar usuarios (con Query)
+GET {{baseUrl}}/usuarios/?offset=0&limit=10
+
+### ======================================================
+### 2) Catalogo
+### ======================================================
+
+### Crear categoria
+POST {{baseUrl}}/categorias/
+Content-Type: {{json}}
+
+{
+  "parent_id": null,
+  "nombre": "Pizzas",
+  "descripcion": "Categoria test",
+  "imagen_url": null
+}
+
+### Crear ingrediente
+POST {{baseUrl}}/ingredientes/
+Content-Type: {{json}}
+
+{
+  "nombre": "Queso",
+  "descripcion": "Mozzarella",
+  "es_alergeno": true
+}
+
+### Crear producto
+POST {{baseUrl}}/productos/
+Content-Type: {{json}}
+
+{
+  "nombre": "Pizza Muzzarella",
+  "descripcion": "Producto test",
+  "precio_base": 3500,
+  "imagenes_url": null,
+  "stock_cantidad": 10,
+  "disponible": true
+}
+
+### Listar productos (con Query)
+GET {{baseUrl}}/productos/?offset=0&limit=10
+
+### Vincular producto-categoria
+POST {{baseUrl}}/producto-categorias/
+Content-Type: {{json}}
+
+{
+  "producto_id": 1,
+  "categoria_id": 1,
+  "es_principal": true
+}
+
+### Vincular producto-ingrediente
+POST {{baseUrl}}/producto-ingredientes/
+Content-Type: {{json}}
+
+{
+  "producto_id": 1,
+  "ingrediente_id": 1,
+  "es_removible": true
+}
+
+### Obtener producto con relaciones
+GET {{baseUrl}}/productos/1
+
+### ======================================================
+### 3) Ventas, Pagos y Trazabilidad
+### ======================================================
+
+### Crear pedido con items
+POST {{baseUrl}}/pedidos/
+Content-Type: {{json}}
+
+{
+  "usuario_id": 1,
+  "notas": "pedido smoke",
+  "items": [
+    {
+      "producto_id": 1,
+      "cantidad": 2
+    }
+  ]
+}
+
+### Ver pedido
+GET {{baseUrl}}/pedidos/1
+
+### Registrar pago aprobado
+POST {{baseUrl}}/pagos/
+Content-Type: {{json}}
+
+{
+  "pedido_id": 1,
+  "monto": 7000,
+  "metodo": "tarjeta",
+  "estado": "aprobado",
+  "referencia": "PAY-001"
+}
+
+### Ver pedido luego del pago (esperado estado=pagado)
+GET {{baseUrl}}/pedidos/1
+
+### Ver auditoria
+GET {{baseUrl}}/auditoria/
+
+### ======================================================
+### 4) Validaciones esperadas
+### ======================================================
+
+### Path invalido (esperado 422 por Path(gt=0))
+GET {{baseUrl}}/productos/0
+
+### Email duplicado (esperado 409)
+POST {{baseUrl}}/usuarios/
+Content-Type: {{json}}
+
+{
+  "rol_id": 1,
+  "nombre": "Mora",
+  "apellido": "Duplicada",
+  "email": "mora.front@example.com",
+  "password": "secret123",
+  "activo": true
+}
