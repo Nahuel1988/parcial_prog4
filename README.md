@@ -103,4 +103,3 @@ Validaciones y relaciones
 
 Persistencia en PostgreSQL
 
-Si querés, te armo también un README completo con instalación, comandos, estructura de carpetas y screenshots.
