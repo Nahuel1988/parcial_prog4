@@ -35,11 +35,14 @@ export function LoginPage({ onLogin }: LoginPageProps) {
   }
 
   return (
-    <section className="mx-auto max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-      <h2 className="mb-4 text-xl font-bold text-slate-900">Iniciar sesión</h2>
-      <p className="mb-6 text-sm text-slate-600">Ingresá con tu email y contraseña para ver tus compras.</p>
+    <section className="surface-panel mx-auto max-w-md p-7">
+      <div className="mb-6">
+        <p className="mb-2 text-xs uppercase tracking-[0.24em] text-[#3d6b4a]">Acceso al panel</p>
+        <h2 className="text-3xl font-semibold text-slate-900">Iniciar sesión</h2>
+        <p className="mt-3 text-sm text-slate-600">Ingresá con tu email y contraseña para gestionar tu cuenta y pedidos.</p>
+      </div>
 
-      <form className="space-y-4" onSubmit={onSubmit}>
+      <form className="space-y-5" onSubmit={onSubmit}>
         <label className="block text-sm font-medium text-slate-700">
           <span>Email</span>
           <input
@@ -47,7 +50,7 @@ export function LoginPage({ onLogin }: LoginPageProps) {
             value={email}
             onChange={(event) => setEmail(event.target.value)}
             required
-            className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 outline-none ring-cyan-500/30 transition focus:ring-4"
+            className="input-surface mt-2 w-full"
           />
         </label>
 
@@ -58,21 +61,21 @@ export function LoginPage({ onLogin }: LoginPageProps) {
             value={password}
             onChange={(event) => setPassword(event.target.value)}
             required
-            className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 outline-none ring-cyan-500/30 transition focus:ring-4"
+            className="input-surface mt-2 w-full"
           />
         </label>
 
         <button
           type="submit"
           disabled={mutation.isPending}
-          className="w-full rounded-xl bg-cyan-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-cyan-500 disabled:cursor-not-allowed disabled:bg-slate-400"
+          className="primary-btn w-full disabled:cursor-not-allowed disabled:bg-slate-400"
         >
           {mutation.isPending ? 'Validando...' : 'Iniciar sesión'}
         </button>
       </form>
 
       {mutation.isError && (
-        <p className="mt-4 rounded-lg bg-rose-100 px-3 py-2 text-sm font-medium text-rose-700">
+        <p className="mt-5 rounded-2xl bg-orange-50 px-4 py-3 text-sm font-medium text-orange-900">
           Error: {mutation.error instanceof Error ? mutation.error.message : 'No se pudo iniciar sesión'}
         </p>
       )}
