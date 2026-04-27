@@ -26,8 +26,9 @@ def create_item(payload: OrderCreate, session: Session = Depends(get_uow_session
 def read_items(
     session: Session = Depends(get_uow_session),
     limit: Annotated[int, Query(ge=1, le=100)] = 20,
+    usuario_id: Annotated[int | None, Query(gt=0)] = None,
 ):
-    return list_orders(session, limit=limit)
+    return list_orders(session, limit=limit, usuario_id=usuario_id)
 
 
 @router.get("/{order_id}", response_model=OrderReadFull)
