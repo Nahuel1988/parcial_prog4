@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useState } from 'react'
+import { useState, type FormEvent } from 'react'
+import { Link } from 'react-router-dom'
 import { createProduct, listProducts } from '../lib/api'
 import type { ProductCreate } from '../types/api'
 import { ProductCard } from '../components/ProductCard'
@@ -22,7 +23,11 @@ const initialForm: ProductFormState = {
   disponible: true,
 }
 
-export function ProductsPage() {
+interface ProductsPageProps {
+  isAdmin: boolean
+}
+
+export function ProductsPage({ isAdmin }: ProductsPageProps) {
   const queryClient = useQueryClient()
   const [form, setForm] = useState<ProductFormState>(initialForm)
 
@@ -39,7 +44,7 @@ export function ProductsPage() {
     },
   })
 
-  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
     const payload: ProductCreate = {
@@ -57,76 +62,99 @@ export function ProductsPage() {
   return (
     <div className="grid gap-6 lg:grid-cols-[360px_1fr]">
       <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <h2 className="mb-3 text-lg font-bold text-slate-900">Alta de producto</h2>
-        <p className="mb-4 text-sm text-slate-600">Usa useState para el formulario y useMutation para enviar al backend.</p>
-
-        <form className="space-y-3" onSubmit={onSubmit}>
-          <TextInput
-            label="Nombre"
-            value={form.nombre}
-            onChange={(value) => setForm((prev) => ({ ...prev, nombre: value }))}
-            required
-          />
-          <TextInput
-            label="Descripcion"
-            value={form.descripcion}
-            onChange={(value) => setForm((prev) => ({ ...prev, descripcion: value }))}
-          />
-          <TextInput
-            label="Precio base"
-            type="number"
-            step="0.01"
-            value={form.precio_base}
-            onChange={(value) => setForm((prev) => ({ ...prev, precio_base: value }))}
-            required
-          />
-          <TextInput
-            label="Imagen URL"
-            value={form.imagenes_url}
-            onChange={(value) => setForm((prev) => ({ ...prev, imagenes_url: value }))}
-          />
-          <TextInput
-            label="Stock"
-            type="number"
-            value={form.stock_cantidad}
-            onChange={(value) => setForm((prev) => ({ ...prev, stock_cantidad: value }))}
-            required
-          />
-
-          <label className="flex items-center gap-2 text-sm text-slate-700">
-            <input
-              type="checkbox"
-              className="h-4 w-4 rounded border-slate-300"
-              checked={form.disponible}
-              onChange={(event) => setForm((prev) => ({ ...prev, disponible: event.target.checked }))}
-            />
-            Disponible
-          </label>
-
-          <button
-            type="submit"
-            disabled={createMutation.isPending}
-            className="w-full rounded-xl bg-cyan-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-cyan-500 disabled:cursor-not-allowed disabled:bg-slate-400"
-          >
-            {createMutation.isPending ? 'Guardando...' : 'Crear producto'}
-          </button>
-        </form>
-
-        {createMutation.isError && (
-          <p className="mt-3 rounded-lg bg-rose-100 px-3 py-2 text-sm font-medium text-rose-700">
-            Error: {createMutation.error.message}
+        <div className="mb-4">
+          <h2 className="mb-3 text-lg font-bold text-slate-900">Alta de producto</h2>
+          <p className="text-sm text-slate-600">
+            {isAdmin
+              ? 'Modo administrador: cargá productos y mantené el inventario actualizado.'
+              : 'No tenés permisos para crear productos. Usá Ventas para comprar.'}
           </p>
-        )}
-        {createMutation.isSuccess && (
-          <p className="mt-3 rounded-lg bg-emerald-100 px-3 py-2 text-sm font-medium text-emerald-700">
-            Producto creado con exito.
-          </p>
+        </div>
+
+        {isAdmin ? (
+          <>
+            <form className="space-y-3" onSubmit={onSubmit}>
+              <TextInput
+                label="Nombre"
+                value={form.nombre}
+                onChange={(value) => setForm((prev) => ({ ...prev, nombre: value }))}
+                required
+              />
+              <TextInput
+                label="Descripcion"
+                value={form.descripcion}
+                onChange={(value) => setForm((prev) => ({ ...prev, descripcion: value }))}
+              />
+              <TextInput
+                label="Precio base"
+                type="number"
+                step="0.01"
+                value={form.precio_base}
+                onChange={(value) => setForm((prev) => ({ ...prev, precio_base: value }))}
+                required
+              />
+              <TextInput
+                label="Imagen URL"
+                value={form.imagenes_url}
+                onChange={(value) => setForm((prev) => ({ ...prev, imagenes_url: value }))}
+              />
+              <TextInput
+                label="Stock"
+                type="number"
+                value={form.stock_cantidad}
+                onChange={(value) => setForm((prev) => ({ ...prev, stock_cantidad: value }))}
+                required
+              />
+
+              <label className="flex items-center gap-2 text-sm text-slate-700">
+                <input
+                  type="checkbox"
+                  className="h-4 w-4 rounded border-slate-300"
+                  checked={form.disponible}
+                  onChange={(event) => setForm((prev) => ({ ...prev, disponible: event.target.checked }))}
+                />
+                Disponible
+              </label>
+
+              <button
+                type="submit"
+                disabled={createMutation.isPending}
+                className="w-full rounded-xl bg-cyan-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-cyan-500 disabled:cursor-not-allowed disabled:bg-slate-400"
+              >
+                {createMutation.isPending ? 'Guardando...' : 'Crear producto'}
+              </button>
+            </form>
+
+            {createMutation.isError && (
+              <p className="mt-3 rounded-lg bg-rose-100 px-3 py-2 text-sm font-medium text-rose-700">
+                Error: {createMutation.error.message}
+              </p>
+            )}
+            {createMutation.isSuccess && (
+              <p className="mt-3 rounded-lg bg-emerald-100 px-3 py-2 text-sm font-medium text-emerald-700">
+                Producto creado con éxito.
+              </p>
+            )}
+          </>
+        ) : (
+          <div className="rounded-2xl bg-slate-50 p-5 text-sm text-slate-700">
+            <p className="mb-3">No tenés permisos para crear productos en este modo.</p>
+            <Link
+              to="/ventas"
+              className="inline-flex rounded-full bg-cyan-600 px-4 py-2 text-sm font-semibold text-white hover:bg-cyan-500"
+            >
+              Ir a Ventas
+            </Link>
+          </div>
         )}
       </section>
 
       <section>
-        <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-lg font-bold text-slate-900">Listado de productos</h2>
+        <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h2 className="text-lg font-bold text-slate-900">Listado de productos</h2>
+            <p className="text-sm text-slate-600">Explorá el catálogo e ingresá nuevos productos según necesites.</p>
+          </div>
           <button
             type="button"
             className="rounded-full bg-slate-800 px-3 py-1.5 text-xs font-semibold text-white hover:bg-slate-700"

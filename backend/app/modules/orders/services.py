@@ -51,8 +51,11 @@ def create_order(session: Session, data: OrderCreate) -> dict:
     return _attach_items(session, [order])[0]
 
 
-def list_orders(session: Session, *, limit: int = 20) -> list[dict]:
-    statement = select(Order).order_by(Order.created_at.desc()).limit(limit)
+def list_orders(session: Session, *, limit: int = 20, usuario_id: int | None = None) -> list[dict]:
+    statement = select(Order)
+    if usuario_id is not None:
+        statement = statement.where(Order.usuario_id == usuario_id)
+    statement = statement.order_by(Order.created_at.desc()).limit(limit)
     orders = list(session.exec(statement).all())
     return _attach_items(session, orders)
 
