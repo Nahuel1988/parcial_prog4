@@ -69,8 +69,8 @@ export function UsersPage({ isAdmin }: UsersPageProps) {
 
   if (!isAdmin) {
     return (
-      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h2 className="mb-3 text-lg font-bold text-slate-900">Usuarios</h2>
+      <section className="surface-panel p-6">
+        <h2 className="mb-3 text-2xl font-semibold text-slate-900">Usuarios</h2>
         <p className="text-sm text-slate-600">
           Esta vista es parte del panel de administración. Iniciá sesión con una cuenta administrativa para gestionar usuarios.
         </p>
@@ -80,9 +80,9 @@ export function UsersPage({ isAdmin }: UsersPageProps) {
 
   return (
     <div className="grid gap-6 lg:grid-cols-[400px_1fr]">
-      <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <h2 className="mb-3 text-lg font-bold text-slate-900">Alta de usuario</h2>
-        <p className="mb-4 text-sm text-slate-600">Administrá roles y usuarios para el panel de ventas.</p>
+      <section className="surface-panel p-6">
+        <h2 className="mb-2 text-2xl font-semibold text-slate-900">Alta de usuario</h2>
+        <p className="mb-6 text-sm text-slate-600">Administrá roles y usuarios para el panel de ventas.</p>
 
         <form className="space-y-3" onSubmit={onSubmit}>
           <TextInput
@@ -121,7 +121,7 @@ export function UsersPage({ isAdmin }: UsersPageProps) {
                   rol_id: event.target.value ? Number(event.target.value) : null,
                 }))
               }
-              className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 outline-none ring-cyan-500/30 transition focus:ring-4"
+              className="input-surface mt-2 w-full"
             >
               <option value="">Sin rol</option>
               {rolesQuery.data?.map((roleItem) => (
@@ -132,10 +132,10 @@ export function UsersPage({ isAdmin }: UsersPageProps) {
             </select>
           </label>
 
-          <label className="flex items-center gap-2 text-sm text-slate-700">
+          <label className="flex items-center gap-3 text-sm font-medium text-slate-700">
             <input
               type="checkbox"
-              className="h-4 w-4 rounded border-slate-300"
+              className="h-4 w-4 rounded border-slate-300 text-[var(--primary)] focus:ring-[var(--primary)]"
               checked={form.activo}
               onChange={(event) => setForm((prev) => ({ ...prev, activo: event.target.checked }))}
             />
@@ -145,7 +145,7 @@ export function UsersPage({ isAdmin }: UsersPageProps) {
           <button
             type="submit"
             disabled={createMutation.isPending}
-            className="w-full rounded-xl bg-cyan-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-cyan-500 disabled:cursor-not-allowed disabled:bg-slate-400"
+            className="primary-btn w-full disabled:cursor-not-allowed disabled:bg-slate-400"
           >
             {createMutation.isPending ? 'Guardando...' : 'Crear usuario'}
           </button>
@@ -163,15 +163,15 @@ export function UsersPage({ isAdmin }: UsersPageProps) {
         )}
       </section>
 
-      <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <div className="mb-3 flex items-center justify-between gap-3">
+      <section className="surface-panel p-6">
+        <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h2 className="text-lg font-bold text-slate-900">Listado de usuarios</h2>
+            <h2 className="text-2xl font-semibold text-slate-900">Listado de usuarios</h2>
             <p className="text-sm text-slate-600">Revisá y activá o desactivá cuentas existentes.</p>
           </div>
           <button
             type="button"
-            className="rounded-full bg-slate-800 px-3 py-1.5 text-xs font-semibold text-white hover:bg-slate-700"
+            className="secondary-btn"
             onClick={() => queryClient.invalidateQueries({ queryKey: ['users'] })}
           >
             Refrescar

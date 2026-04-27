@@ -61,9 +61,9 @@ export function ProductsPage({ isAdmin }: ProductsPageProps) {
 
   return (
     <div className="grid gap-6 lg:grid-cols-[360px_1fr]">
-      <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <div className="mb-4">
-          <h2 className="mb-3 text-lg font-bold text-slate-900">Alta de producto</h2>
+      <section className="surface-panel p-6">
+        <div className="mb-6">
+          <h2 className="mb-2 text-2xl font-semibold text-slate-900">Alta de producto</h2>
           <p className="text-sm text-slate-600">
             {isAdmin
               ? 'Modo administrador: cargá productos y mantené el inventario actualizado.'
@@ -73,7 +73,7 @@ export function ProductsPage({ isAdmin }: ProductsPageProps) {
 
         {isAdmin ? (
           <>
-            <form className="space-y-3" onSubmit={onSubmit}>
+            <form className="space-y-4" onSubmit={onSubmit}>
               <TextInput
                 label="Nombre"
                 value={form.nombre}
@@ -81,7 +81,7 @@ export function ProductsPage({ isAdmin }: ProductsPageProps) {
                 required
               />
               <TextInput
-                label="Descripcion"
+                label="Descripción"
                 value={form.descripcion}
                 onChange={(value) => setForm((prev) => ({ ...prev, descripcion: value }))}
               />
@@ -106,10 +106,10 @@ export function ProductsPage({ isAdmin }: ProductsPageProps) {
                 required
               />
 
-              <label className="flex items-center gap-2 text-sm text-slate-700">
+              <label className="flex items-center gap-3 text-sm font-medium text-slate-700">
                 <input
                   type="checkbox"
-                  className="h-4 w-4 rounded border-slate-300"
+                  className="h-4 w-4 rounded border-slate-300 text-[var(--primary)] focus:ring-[var(--primary)]"
                   checked={form.disponible}
                   onChange={(event) => setForm((prev) => ({ ...prev, disponible: event.target.checked }))}
                 />
@@ -119,30 +119,27 @@ export function ProductsPage({ isAdmin }: ProductsPageProps) {
               <button
                 type="submit"
                 disabled={createMutation.isPending}
-                className="w-full rounded-xl bg-cyan-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-cyan-500 disabled:cursor-not-allowed disabled:bg-slate-400"
+                className="primary-btn w-full disabled:cursor-not-allowed disabled:bg-slate-400"
               >
                 {createMutation.isPending ? 'Guardando...' : 'Crear producto'}
               </button>
             </form>
 
             {createMutation.isError && (
-              <p className="mt-3 rounded-lg bg-rose-100 px-3 py-2 text-sm font-medium text-rose-700">
+              <p className="mt-4 rounded-2xl bg-orange-50 px-4 py-3 text-sm font-medium text-orange-900">
                 Error: {createMutation.error.message}
               </p>
             )}
             {createMutation.isSuccess && (
-              <p className="mt-3 rounded-lg bg-emerald-100 px-3 py-2 text-sm font-medium text-emerald-700">
+              <p className="mt-4 rounded-2xl bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-900">
                 Producto creado con éxito.
               </p>
             )}
           </>
         ) : (
-          <div className="rounded-2xl bg-slate-50 p-5 text-sm text-slate-700">
+          <div className="surface-card p-5 text-sm text-slate-700">
             <p className="mb-3">No tenés permisos para crear productos en este modo.</p>
-            <Link
-              to="/ventas"
-              className="inline-flex rounded-full bg-cyan-600 px-4 py-2 text-sm font-semibold text-white hover:bg-cyan-500"
-            >
+            <Link to="/ventas" className="primary-btn w-full justify-center">
               Ir a Ventas
             </Link>
           </div>
@@ -150,14 +147,14 @@ export function ProductsPage({ isAdmin }: ProductsPageProps) {
       </section>
 
       <section>
-        <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h2 className="text-lg font-bold text-slate-900">Listado de productos</h2>
+            <h2 className="text-2xl font-semibold text-slate-900">Listado de productos</h2>
             <p className="text-sm text-slate-600">Explorá el catálogo e ingresá nuevos productos según necesites.</p>
           </div>
           <button
             type="button"
-            className="rounded-full bg-slate-800 px-3 py-1.5 text-xs font-semibold text-white hover:bg-slate-700"
+            className="secondary-btn"
             onClick={() => queryClient.invalidateQueries({ queryKey: ['products'] })}
           >
             Refrescar
@@ -165,17 +162,17 @@ export function ProductsPage({ isAdmin }: ProductsPageProps) {
         </div>
 
         {productsQuery.isPending && (
-          <p className="rounded-xl bg-sky-100 px-4 py-3 text-sm font-medium text-sky-700">Cargando productos...</p>
+          <p className="rounded-2xl bg-[#eef9f1] px-4 py-3 text-sm font-semibold text-[#27603f]">Cargando productos...</p>
         )}
 
         {productsQuery.isError && (
-          <p className="rounded-xl bg-rose-100 px-4 py-3 text-sm font-medium text-rose-700">
+          <p className="rounded-2xl bg-orange-50 px-4 py-3 text-sm font-semibold text-orange-900">
             Error: {productsQuery.error.message}
           </p>
         )}
 
         {productsQuery.isSuccess && (
-          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
             {productsQuery.data.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}

@@ -14,9 +14,9 @@ export function ProductDetailPage() {
 
   if (!Number.isInteger(id) || id <= 0) {
     return (
-      <section className="rounded-2xl bg-rose-100 p-6 text-rose-700">
-        <p className="mb-3 text-sm font-semibold">ID invalido.</p>
-        <Link to="/" className="rounded-full bg-rose-600 px-3 py-1.5 text-xs font-semibold text-white">
+      <section className="surface-card p-6 text-orange-900">
+        <p className="mb-3 text-sm font-semibold">ID inválido.</p>
+        <Link to="/" className="secondary-btn text-sm">
           Volver
         </Link>
       </section>
@@ -24,50 +24,73 @@ export function ProductDetailPage() {
   }
 
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-xl font-bold text-slate-900">Detalle de producto #{id}</h2>
-        <Link to="/" className="rounded-full bg-slate-800 px-3 py-1.5 text-xs font-semibold text-white hover:bg-slate-700">
+    <section className="surface-card p-6">
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <p className="text-sm uppercase tracking-[0.2em] text-[#3d6b4a]">Producto detalle</p>
+          <h2 className="text-3xl font-semibold text-slate-900">#{id}</h2>
+        </div>
+        <Link to="/" className="secondary-btn text-sm">
           Volver al listado
         </Link>
       </div>
 
       {detailQuery.isPending && (
-        <p className="rounded-xl bg-sky-100 px-4 py-3 text-sm font-medium text-sky-700">Cargando detalle...</p>
+        <p className="rounded-2xl bg-[#eef9f1] px-4 py-3 text-sm font-semibold text-[#27603f]">Cargando detalle...</p>
       )}
 
       {detailQuery.isError && (
-        <p className="rounded-xl bg-rose-100 px-4 py-3 text-sm font-medium text-rose-700">
+        <p className="rounded-2xl bg-orange-50 px-4 py-3 text-sm font-semibold text-orange-900">
           Error: {detailQuery.error.message}
         </p>
       )}
 
       {detailQuery.isSuccess && (
-        <div className="space-y-3 text-sm text-slate-700">
-          <p>
-            <strong className="text-slate-900">Nombre:</strong> {detailQuery.data.nombre}
-          </p>
-          <p>
-            <strong className="text-slate-900">Descripcion:</strong> {detailQuery.data.descripcion ?? 'Sin descripcion'}
-          </p>
-          <p>
-            <strong className="text-slate-900">Precio:</strong> ${detailQuery.data.precio_base.toFixed(2)}
-          </p>
-          <p>
-            <strong className="text-slate-900">Stock:</strong> {detailQuery.data.stock_cantidad}
-          </p>
-          <p>
-            <strong className="text-slate-900">Categorias:</strong>{' '}
-            {detailQuery.data.categories.length > 0
-              ? detailQuery.data.categories.map((item) => item.nombre).join(', ')
-              : 'Sin categorias'}
-          </p>
-          <p>
-            <strong className="text-slate-900">Ingredientes:</strong>{' '}
-            {detailQuery.data.ingredients.length > 0
-              ? detailQuery.data.ingredients.map((item) => item.nombre).join(', ')
-              : 'Sin ingredientes'}
-          </p>
+        <div className="space-y-4 text-sm text-slate-700">
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="rounded-2xl bg-[#f7faf3] p-4">
+              <p className="text-xs uppercase tracking-[0.18em] text-[#3d6b4a]">Precio</p>
+              <p className="mt-2 text-xl font-semibold text-slate-900">${detailQuery.data.precio_base.toFixed(2)}</p>
+            </div>
+            <div className="rounded-2xl bg-[#f7faf3] p-4">
+              <p className="text-xs uppercase tracking-[0.18em] text-[#3d6b4a]">Stock</p>
+              <p className="mt-2 text-xl font-semibold text-slate-900">{detailQuery.data.stock_cantidad}</p>
+            </div>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="rounded-2xl bg-[#f7faf3] p-4">
+              <p className="text-xs uppercase tracking-[0.18em] text-[#3d6b4a]">Nombre</p>
+              <p className="mt-2 font-semibold text-slate-900">{detailQuery.data.nombre}</p>
+            </div>
+            <div className="rounded-2xl bg-[#f7faf3] p-4">
+              <p className="text-xs uppercase tracking-[0.18em] text-[#3d6b4a]">Disponible</p>
+              <p className="mt-2 font-semibold text-slate-900">{detailQuery.data.disponible ? 'Sí' : 'No'}</p>
+            </div>
+          </div>
+
+          <div className="rounded-2xl bg-[#f7faf3] p-4">
+            <p className="text-xs uppercase tracking-[0.18em] text-[#3d6b4a]">Descripción</p>
+            <p className="mt-2 text-slate-700">{detailQuery.data.descripcion ?? 'Sin descripción'}</p>
+          </div>
+
+          <div className="rounded-2xl bg-[#f7faf3] p-4">
+            <p className="text-xs uppercase tracking-[0.18em] text-[#3d6b4a]">Categorías</p>
+            <p className="mt-2 text-slate-700">
+              {detailQuery.data.categories.length > 0
+                ? detailQuery.data.categories.map((item) => item.nombre).join(', ')
+                : 'Sin categorías'}
+            </p>
+          </div>
+
+          <div className="rounded-2xl bg-[#f7faf3] p-4">
+            <p className="text-xs uppercase tracking-[0.18em] text-[#3d6b4a]">Ingredientes</p>
+            <p className="mt-2 text-slate-700">
+              {detailQuery.data.ingredients.length > 0
+                ? detailQuery.data.ingredients.map((item) => item.nombre).join(', ')
+                : 'Sin ingredientes'}
+            </p>
+          </div>
         </div>
       )}
     </section>

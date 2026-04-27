@@ -29,24 +29,27 @@ function App() {
   const isAdmin = currentUser?.rol_id === 1
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top_right,_#e0f2fe_0%,_#f8fafc_35%,_#f1f5f9_100%)]">
-      <header className="border-b border-slate-200/70 bg-white/80 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 py-4">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top_right,_rgba(15,82,56,0.12)_0%,_transparent_24%),_radial-gradient(circle_at_20%_20%,_rgba(252,138,64,0.08)_0%,_transparent_18%),_linear-gradient(180deg,_#f7faf6_0%,_#ecf3ef_100%)]">
+      <header className="sticky top-0 z-30 border-b border-white/70 bg-white/85 backdrop-blur-xl shadow-sm">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 py-5">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-700">Parcial Prog4</p>
-            <h1 className="font-serif text-2xl font-bold text-slate-900">Panel de Gestión</h1>
+            <p className="mb-1 text-xs font-semibold uppercase tracking-[0.25em] text-[#3d6b4a]">Fresh Market Admin</p>
+            <div className="flex flex-wrap items-center gap-3">
+              <span className="text-2xl font-bold text-slate-900">Panel de Gestión</span>
+              <span className="brand-pill">Market</span>
+            </div>
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
             {currentUser ? (
               <>
-                <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-slate-700">
+                <span className="rounded-full bg-[#ebf5ed] px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[#2c533c]">
                   {currentUser.nombre} {currentUser.apellido ?? ''}
                 </span>
                 <button
                   type="button"
                   onClick={() => setCurrentUser(null)}
-                  className="rounded-full bg-rose-100 px-3 py-1 text-xs font-semibold text-rose-700 hover:bg-rose-200"
+                  className="secondary-btn text-sm"
                 >
                   Cerrar sesión
                 </button>
@@ -56,10 +59,8 @@ function App() {
                 to="/login"
                 className={({ isActive }) =>
                   [
-                    'rounded-full px-4 py-2 text-sm font-semibold transition',
-                    isActive
-                      ? 'bg-cyan-600 text-white shadow-sm'
-                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200',
+                    'secondary-btn text-sm',
+                    isActive ? 'bg-[#2d6a4f] text-white' : 'bg-[#f7faf3] text-[#1c2921]',
                   ].join(' ')
                 }
               >
@@ -69,14 +70,14 @@ function App() {
           </div>
         </div>
 
-        <div className="mx-auto flex max-w-6xl flex-wrap gap-2 px-4 py-3">
+        <div className="mx-auto flex max-w-6xl flex-wrap gap-2 px-4 pb-4">
           {isAdmin && <NavItem to="/">Productos</NavItem>}
           <NavItem to="/ventas">Ventas</NavItem>
           {isAdmin && <NavItem to="/usuarios">Usuarios</NavItem>}
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl px-4 py-6">
+      <main className="mx-auto max-w-6xl px-4 py-8">
         <Routes>
           <Route path="/login" element={<LoginPage onLogin={setCurrentUser} />} />
           <Route
