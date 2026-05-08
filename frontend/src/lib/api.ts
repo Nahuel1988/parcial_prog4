@@ -68,38 +68,7 @@ export async function createProduct(payload: ProductCreate): Promise<ProductRead
   return apiPost<ProductCreate, ProductReadFull>('/productos/', payload)
 }
 
-export async function listUsers(offset = 0, limit = 20): Promise<UserRead[]> {
-  return apiGet<UserRead[]>(`/usuarios/?offset=${offset}&limit=${limit}`)
-}
-
-export async function createUser(payload: UserCreate): Promise<UserRead> {
-  return apiPost<UserCreate, UserRead>('/usuarios/', payload)
-}
-
-export async function updateUser(userId: number, payload: UserUpdate): Promise<UserRead> {
-  return apiPatch<UserUpdate, UserRead>(`/usuarios/${userId}`, payload)
-}
-
-export async function listRoles(): Promise<RoleRead[]> {
-  return apiGet<RoleRead[]>('/roles/')
-}
-
-export async function listOrders(limit = 20, usuarioId?: number): Promise<OrderReadFull[]> {
-  const query = usuarioId ? `?limit=${limit}&usuario_id=${usuarioId}` : `?limit=${limit}`
-  return apiGet<OrderReadFull[]>(`/pedidos/${query}`)
-}
-
-export async function createOrder(payload: OrderCreate): Promise<OrderReadFull> {
-  return apiPost<OrderCreate, OrderReadFull>('/pedidos/', payload)
-}
-
-export async function login(payload: LoginRequest): Promise<LoginResponse> {
-  return apiPost<LoginRequest, LoginResponse>('/auth/login', payload)
-}
-
-export async function getUser(id: number): Promise<UserRead> {
-  return apiGet<UserRead>(`/usuarios/${id}`)
-}
+// Domain 2 focused API: keep core HTTP helpers and product endpoints only.
 
 async function toError(response: Response): Promise<Error> {
   let message = `HTTP ${response.status}`
