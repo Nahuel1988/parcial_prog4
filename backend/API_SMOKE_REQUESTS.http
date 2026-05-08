@@ -14,7 +14,7 @@ Content-Type: {{json}}
 
 {
   "parent_id": null,
-  "nombre": "Pizzas",
+  "nombre": "Hamburguesas",
   "descripcion": "Categoria smoke",
   "imagen_url": null
 }
@@ -74,3 +74,56 @@ GET {{baseUrl}}/productos/1
 
 ### Path invalido (esperado 422 por Path(gt=0))
 GET {{baseUrl}}/productos/0
+
+### ======================================================
+### E2E Smoke (secuencial) - ejecutar paso a paso
+### ======================================================
+
+### 1) Crear ingrediente (ejecutar)
+POST {{baseUrl}}/ingredientes/
+Content-Type: {{json}}
+
+{
+  "nombre": "Ing Smoke HTTP",
+  "descripcion": "Creado desde API_SMOKE_REQUESTS.http",
+  "es_alergeno": false
+}
+
+### 2) Crear producto (ejecutar)
+POST {{baseUrl}}/productos/
+Content-Type: {{json}}
+
+{
+  "nombre": "Producto Smoke HTTP",
+  "descripcion": "Creado desde API_SMOKE_REQUESTS.http",
+  "precio_base": 199.9,
+  "imagenes_url": null,
+  "stock_cantidad": 5,
+  "disponible": true
+}
+
+### 3) Vincular producto-categoria (editar `producto_id` con el id devuelto por la petición anterior)
+POST {{baseUrl}}/producto-categorias/
+Content-Type: {{json}}
+
+{
+  "producto_id": 1,
+  "categoria_id": 1,
+  "es_principal": true
+}
+
+### 4) Vincular producto-ingrediente (editar `producto_id` y `ingrediente_id` con los ids devueltos)
+POST {{baseUrl}}/producto-ingredientes/
+Content-Type: {{json}}
+
+{
+  "producto_id": 1,
+  "ingrediente_id": 1,
+  "es_removible": false
+}
+
+### 5) Obtener producto vinculado (editar id)
+GET {{baseUrl}}/productos/1
+
+### Nota: Para ejecutar todo de forma automatizada, ejecutá el script PowerShell
+### `backend/scripts/smoke_e2e.ps1` (incluido junto a este archivo).
