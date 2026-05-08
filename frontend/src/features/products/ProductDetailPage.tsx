@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link, useParams } from 'react-router-dom'
-import { getProduct } from '../../lib/api'
+import { getProduct } from './api'
 
 export function ProductDetailPage() {
   const params = useParams<{ id: string }>()

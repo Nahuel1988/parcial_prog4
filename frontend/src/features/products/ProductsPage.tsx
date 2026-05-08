@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
-import { createProduct, listProducts } from '../../lib/api'
+import { createProduct, listProducts } from './api'
 import type { ProductCreate } from '../../types/api'
 import { ProductCard } from '../../shared/components/ProductCard'
 
