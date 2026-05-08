@@ -1,7 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
-import { createProduct, listProducts } from './api'
+import { createProduct, listProducts, createProductCategory } from './api'
+import { listCategories } from '../categories/api'
 import type { ProductCreate } from '../../types/api'
 import { ProductCard } from '../../shared/components/ProductCard'
 
@@ -30,6 +31,7 @@ interface ProductsPageProps {
 export function ProductsPage({ isAdmin }: ProductsPageProps) {
   const queryClient = useQueryClient()
   const [form, setForm] = useState<ProductFormState>(initialForm)
+  const [selectedCategories, setSelectedCategories] = useState<number[]>([])
 
   const productsQuery = useQuery({
     queryKey: ['products'],
@@ -38,11 +40,24 @@ export function ProductsPage({ isAdmin }: ProductsPageProps) {
 
   const createMutation = useMutation({
     mutationFn: createProduct,
-    onSuccess: async () => {
+    onSuccess: async (data) => {
+      // data is the created product
+      if (selectedCategories.length > 0) {
+        await Promise.all(
+          selectedCategories.map((catId, idx) =>
+            createProductCategory({ producto_id: data.id, categoria_id: catId, es_principal: idx === 0 }),
+          ),
+        )
+      }
+
       setForm(initialForm)
+      setSelectedCategories([])
       await queryClient.invalidateQueries({ queryKey: ['products'] })
+      await queryClient.invalidateQueries({ queryKey: ['categories'] })
     },
   })
+
+  const categoriesQuery = useQuery({ queryKey: ['categories'], queryFn: () => listCategories() })
 
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -105,6 +120,29 @@ export function ProductsPage({ isAdmin }: ProductsPageProps) {
                 onChange={(value) => setForm((prev) => ({ ...prev, stock_cantidad: value }))}
                 required
               />
+
+              <div className="text-sm">
+                <label className="block mb-2 font-medium text-slate-700">Categorías</label>
+                {categoriesQuery.isPending && <div className="text-sm text-slate-500">Cargando categorías...</div>}
+                {categoriesQuery.isError && <div className="text-sm text-rose-600">Error cargando categorías</div>}
+                {categoriesQuery.isSuccess && (
+                  <div className="grid gap-2">
+                    {categoriesQuery.data.map((cat) => (
+                      <label key={cat.id} className="inline-flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          checked={selectedCategories.includes(cat.id)}
+                          onChange={(e) => {
+                            if (e.currentTarget.checked) setSelectedCategories((s) => [...s, cat.id])
+                            else setSelectedCategories((s) => s.filter((id) => id !== cat.id))
+                          }}
+                        />
+                        <span className="text-sm">{cat.nombre}</span>
+                      </label>
+                    ))}
+                  </div>
+                )}
+              </div>
 
               <label className="flex items-center gap-3 text-sm font-medium text-slate-700">
                 <input
