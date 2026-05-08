@@ -31,7 +31,7 @@ interface ProductsPageProps {
 export function ProductsPage({ isAdmin }: ProductsPageProps) {
   const queryClient = useQueryClient()
   const [form, setForm] = useState<ProductFormState>(initialForm)
-  const [selectedCategories, setSelectedCategories] = useState<number[]>([])
+  const [selectedCategory, setSelectedCategory] = useState<number | null>(null)
 
   const productsQuery = useQuery({
     queryKey: ['products'],
@@ -40,18 +40,14 @@ export function ProductsPage({ isAdmin }: ProductsPageProps) {
 
   const createMutation = useMutation({
     mutationFn: createProduct,
-    onSuccess: async (data) => {
-      // data is the created product
-      if (selectedCategories.length > 0) {
-        await Promise.all(
-          selectedCategories.map((catId, idx) =>
-            createProductCategory({ producto_id: data.id, categoria_id: catId, es_principal: idx === 0 }),
-          ),
-        )
+      onSuccess: async (data) => {
+      // data is the created product; create single product-category relation if selected
+      if (selectedCategory !== null) {
+        await createProductCategory({ producto_id: data.id, categoria_id: selectedCategory, es_principal: true })
       }
 
       setForm(initialForm)
-      setSelectedCategories([])
+      setSelectedCategory(null)
       await queryClient.invalidateQueries({ queryKey: ['products'] })
       await queryClient.invalidateQueries({ queryKey: ['categories'] })
     },
@@ -130,12 +126,10 @@ export function ProductsPage({ isAdmin }: ProductsPageProps) {
                     {categoriesQuery.data.map((cat) => (
                       <label key={cat.id} className="inline-flex items-center gap-2">
                         <input
-                          type="checkbox"
-                          checked={selectedCategories.includes(cat.id)}
-                          onChange={(e) => {
-                            if (e.currentTarget.checked) setSelectedCategories((s) => [...s, cat.id])
-                            else setSelectedCategories((s) => s.filter((id) => id !== cat.id))
-                          }}
+                          type="radio"
+                          name="categoria"
+                          checked={selectedCategory === cat.id}
+                          onChange={() => setSelectedCategory(cat.id)}
                         />
                         <span className="text-sm">{cat.nombre}</span>
                       </label>
