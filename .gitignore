@@ -70,3 +70,19 @@ desktop.ini
 
 # Optional: local VSCode workspace settings
 .vscode/settings.json
+
+# ---- Local working files ----
+# Ignore markdown notes used only for local work (use these suffixes for local notes)
+*.local.md
+*.work.md
+*.notes.md
+
+# Ignore local JSON config files (backend)
+*.local.json
+*.dev.json
+backend/*.local.json
+backend/*.dev.json
+
+# Ensure python cache ignored
+**/__pycache__/
+**/*.py[cod]
