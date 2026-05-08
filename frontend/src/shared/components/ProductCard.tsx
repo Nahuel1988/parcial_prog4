@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import type { ProductReadFull } from '../types/api'
+import type { ProductReadFull } from '../../types/api'
 
 interface ProductCardProps {
   product: ProductReadFull
