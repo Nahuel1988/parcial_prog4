@@ -8,8 +8,6 @@ from datetime import datetime, timezone
 def create_product_ingredient(session: Session, data: ProductIngredientCreate) -> ProductIngredient:
     product_ingredient = ProductIngredient.model_validate(data)
     session.add(product_ingredient)
-    session.commit()
-    session.refresh(product_ingredient)
     return product_ingredient
 
 
@@ -40,8 +38,6 @@ def update_product_ingredient(
     updates["updated_at"] = datetime.now(timezone.utc)
     product_ingredient.sqlmodel_update(updates)
     session.add(product_ingredient)
-    session.commit()
-    session.refresh(product_ingredient)
     return product_ingredient
 
 
@@ -51,5 +47,4 @@ def delete_product_ingredient(session: Session, key: tuple[int, int]) -> bool:
         return False
 
     session.delete(product_ingredient)
-    session.commit()
     return True

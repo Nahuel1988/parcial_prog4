@@ -1,8 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
-import { createProduct, listProducts, createProductCategory } from './api'
+import { createProduct, listProducts, createProductCategory, createProductIngredient } from './api'
 import { listCategories } from '../categories/api'
+import { listIngredients } from '../ingredients/api'
 import type { ProductCreate } from '../../types/api'
 import { ProductCard } from '../../shared/components/ProductCard'
 
@@ -32,6 +33,7 @@ export function ProductsPage({ isAdmin }: ProductsPageProps) {
   const queryClient = useQueryClient()
   const [form, setForm] = useState<ProductFormState>(initialForm)
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null)
+  const [selectedIngredients, setSelectedIngredients] = useState<number[]>([])
 
   const productsQuery = useQuery({
     queryKey: ['products'],
@@ -46,14 +48,26 @@ export function ProductsPage({ isAdmin }: ProductsPageProps) {
         await createProductCategory({ producto_id: data.id, categoria_id: selectedCategory, es_principal: true })
       }
 
+      // create multiple product-ingredient relations
+      if (selectedIngredients.length > 0) {
+        await Promise.all(
+          selectedIngredients.map((ingId) =>
+            createProductIngredient({ producto_id: data.id, ingrediente_id: ingId, es_removible: false }),
+          ),
+        )
+      }
+
       setForm(initialForm)
       setSelectedCategory(null)
+      setSelectedIngredients([])
       await queryClient.invalidateQueries({ queryKey: ['products'] })
       await queryClient.invalidateQueries({ queryKey: ['categories'] })
+      await queryClient.invalidateQueries({ queryKey: ['ingredients'] })
     },
   })
 
   const categoriesQuery = useQuery({ queryKey: ['categories'], queryFn: () => listCategories() })
+  const ingredientsQuery = useQuery({ queryKey: ['ingredients'], queryFn: () => listIngredients() })
 
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -136,6 +150,28 @@ export function ProductsPage({ isAdmin }: ProductsPageProps) {
                     ))}
                   </div>
                 )}
+                  <div className="mt-3">
+                    <label className="block mb-2 font-medium text-slate-700">Ingredientes</label>
+                    {ingredientsQuery.isPending && <div className="text-sm text-slate-500">Cargando ingredientes...</div>}
+                    {ingredientsQuery.isError && <div className="text-sm text-rose-600">Error cargando ingredientes</div>}
+                    {ingredientsQuery.isSuccess && (
+                      <div className="grid gap-2">
+                        {ingredientsQuery.data.map((ing) => (
+                          <label key={ing.id} className="inline-flex items-center gap-2">
+                            <input
+                              type="checkbox"
+                              checked={selectedIngredients.includes(ing.id)}
+                              onChange={(e) => {
+                                if (e.currentTarget.checked) setSelectedIngredients((s) => [...s, ing.id])
+                                else setSelectedIngredients((s) => s.filter((id) => id !== ing.id))
+                              }}
+                            />
+                            <span className="text-sm">{ing.nombre}</span>
+                          </label>
+                        ))}
+                      </div>
+                    )}
+                  </div>
               </div>
 
               <label className="flex items-center gap-3 text-sm font-medium text-slate-700">

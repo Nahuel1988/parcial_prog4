@@ -6,6 +6,14 @@ export interface CategoryRead {
 export interface IngredientRead {
   id: number
   nombre: string
+  descripcion?: string | null
+  es_alergeno?: boolean
+}
+
+export interface IngredientCreate {
+  nombre: string
+  descripcion?: string | null
+  es_alergeno?: boolean
 }
 
 export interface ProductReadFull {
@@ -27,6 +35,34 @@ export interface ProductCreate {
   imagenes_url: string | null
   stock_cantidad: number
   disponible: boolean
+}
+
+export interface ProductCategoryCreate {
+  producto_id: number
+  categoria_id: number
+  es_principal?: boolean
+}
+
+export interface ProductCategoryRead {
+  producto_id: number
+  categoria_id: number
+  es_principal: boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface ProductIngredientCreate {
+  producto_id: number
+  ingrediente_id: number
+  es_removible?: boolean
+}
+
+export interface ProductIngredientRead {
+  producto_id: number
+  ingrediente_id: number
+  es_removible: boolean
+  created_at: string
+  updated_at: string
 }
 
 export interface UserRead {

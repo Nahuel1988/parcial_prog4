@@ -7,8 +7,6 @@ from app.modules.ingredients.schemas import IngredientCreate, IngredientUpdate
 def create_ingredient(session: Session, data: IngredientCreate) -> Ingredient:
     ingredient = Ingredient.model_validate(data)
     session.add(ingredient)
-    session.commit()
-    session.refresh(ingredient)
     return ingredient
 
 
@@ -28,8 +26,6 @@ def update_ingredient(session: Session, ingredient_id: int, data: IngredientUpda
 
     ingredient.sqlmodel_update(data.model_dump(exclude_unset=True))
     session.add(ingredient)
-    session.commit()
-    session.refresh(ingredient)
     return ingredient
 
 
@@ -39,5 +35,4 @@ def delete_ingredient(session: Session, ingredient_id: int) -> bool:
         return False
 
     session.delete(ingredient)
-    session.commit()
     return True

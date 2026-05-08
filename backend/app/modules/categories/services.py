@@ -8,8 +8,6 @@ from datetime import datetime, timezone
 def create_category(session: Session, data: CategoryCreate) -> Category:
     category = Category.model_validate(data)
     session.add(category)
-    session.commit()
-    session.refresh(category)
     return category
 
 
@@ -30,8 +28,6 @@ def update_category(session: Session, category_id: int, data: CategoryUpdate) ->
     updates["updated_at"] = datetime.now(timezone.utc)
     category.sqlmodel_update(updates)
     session.add(category)
-    session.commit()
-    session.refresh(category)
     return category
 
 
@@ -41,5 +37,4 @@ def delete_category(session: Session, category_id: int) -> bool:
         return False
 
     session.delete(category)
-    session.commit()
     return True

@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, Path, Query, status
 from sqlmodel import Session
 
-from app.core.uow import get_uow_session
+from app.core.uow import get_uow, SqlModelUnitOfWork
 from app.modules.product_ingredients.schemas import (
     ProductIngredientCreate,
     ProductIngredientRead,
@@ -21,26 +21,32 @@ router = APIRouter(prefix="/producto-ingredientes", tags=["ProductoIngredientes"
 
 
 @router.post("/", response_model=ProductIngredientRead, status_code=status.HTTP_201_CREATED)
-def create_item(payload: ProductIngredientCreate, session: Session = Depends(get_uow_session)):
-    return create_product_ingredient(session, payload)
+def create_item(payload: ProductIngredientCreate, uow: SqlModelUnitOfWork = Depends(get_uow)):
+    pi = create_product_ingredient(uow.session, payload)
+    uow.commit()
+    try:
+        uow.session.refresh(pi)
+    except Exception:
+        pass
+    return pi
 
 
 @router.get("/", response_model=list[ProductIngredientRead])
 def read_items(
-    session: Session = Depends(get_uow_session),
     offset: Annotated[int, Query(ge=0, le=100000)] = 0,
     limit: Annotated[int, Query(ge=1, le=100)] = 20,
 ):
-    return list_product_ingredients(session, offset=offset, limit=limit)
+    with SqlModelUnitOfWork() as uow:
+        return list_product_ingredients(uow.session, offset=offset, limit=limit)
 
 
 @router.get("/{product_id}/{ingredient_id}", response_model=ProductIngredientRead)
 def read_item(
     product_id: Annotated[int, Path(gt=0)],
     ingredient_id: Annotated[int, Path(gt=0)],
-    session: Session = Depends(get_uow_session),
 ):
-    product_ingredient = get_product_ingredient(session, product_id, ingredient_id)
+    with SqlModelUnitOfWork() as uow:
+        product_ingredient = get_product_ingredient(uow.session, product_id, ingredient_id)
     if product_ingredient is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="ProductIngredient not found")
     return product_ingredient
@@ -51,11 +57,16 @@ def update_item(
     product_id: Annotated[int, Path(gt=0)],
     ingredient_id: Annotated[int, Path(gt=0)],
     payload: ProductIngredientUpdate,
-    session: Session = Depends(get_uow_session),
+    uow: SqlModelUnitOfWork = Depends(get_uow),
 ):
-    product_ingredient = update_product_ingredient(session, product_id, ingredient_id, payload)
+    product_ingredient = update_product_ingredient(uow.session, product_id, ingredient_id, payload)
     if product_ingredient is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="ProductIngredient not found")
+    uow.commit()
+    try:
+        uow.session.refresh(product_ingredient)
+    except Exception:
+        pass
     return product_ingredient
 
 
@@ -63,8 +74,9 @@ def update_item(
 def remove_item(
     product_id: Annotated[int, Path(gt=0)],
     ingredient_id: Annotated[int, Path(gt=0)],
-    session: Session = Depends(get_uow_session),
+    uow: SqlModelUnitOfWork = Depends(get_uow),
 ):
-    deleted = delete_product_ingredient(session, (product_id, ingredient_id))
+    deleted = delete_product_ingredient(uow.session, (product_id, ingredient_id))
     if not deleted:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="ProductIngredient not found")
+    uow.commit()

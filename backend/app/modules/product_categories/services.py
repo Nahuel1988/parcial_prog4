@@ -8,8 +8,6 @@ from datetime import datetime, timezone
 def create_product_category(session: Session, data: ProductCategoryCreate) -> ProductCategory:
     product_category = ProductCategory.model_validate(data)
     session.add(product_category)
-    session.commit()
-    session.refresh(product_category)
     return product_category
 
 
@@ -40,8 +38,6 @@ def update_product_category(
     updates["updated_at"] = datetime.now(timezone.utc)
     product_category.sqlmodel_update(updates)
     session.add(product_category)
-    session.commit()
-    session.refresh(product_category)
     return product_category
 
 
@@ -51,5 +47,4 @@ def delete_product_category(session: Session, key: tuple[int, int]) -> bool:
         return False
 
     session.delete(product_category)
-    session.commit()
     return True

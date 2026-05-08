@@ -18,8 +18,6 @@ def _product_query():
 def create_product(session: Session, data: ProductCreate) -> Product:
     product = Product.model_validate(data)
     session.add(product)
-    session.commit()
-    session.refresh(product)
     return get_product(session, product.id) or product
 
 
@@ -42,8 +40,6 @@ def update_product(session: Session, product_id: int, data: ProductUpdate) -> Pr
     updates["updated_at"] = datetime.now(timezone.utc)
     product.sqlmodel_update(updates)
     session.add(product)
-    session.commit()
-    session.refresh(product)
     return get_product(session, product.id) or product
 
 
@@ -53,5 +49,4 @@ def delete_product(session: Session, product_id: int) -> bool:
         return False
 
     session.delete(product)
-    session.commit()
     return True
