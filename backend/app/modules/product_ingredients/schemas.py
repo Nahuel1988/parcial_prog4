@@ -1,5 +1,7 @@
 from typing import Optional
 
+from datetime import datetime
+
 from pydantic import BaseModel, ConfigDict
 
 
@@ -19,3 +21,5 @@ class ProductIngredientUpdate(BaseModel):
 
 class ProductIngredientRead(ProductIngredientBase):
     model_config = ConfigDict(from_attributes=True)
+    created_at: datetime
+    updated_at: datetime

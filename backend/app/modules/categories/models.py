@@ -1,4 +1,5 @@
 from typing import Optional
+from datetime import datetime, timezone
 
 from sqlmodel import Field, Relationship, SQLModel
 
@@ -9,6 +10,8 @@ class Category(SQLModel, table=True):
     nombre: str = Field(index=True, nullable=False, min_length=2, max_length=100)
     descripcion: Optional[str] = Field(default=None)
     imagen_url: Optional[str] = Field(default=None)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), nullable=False)
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), nullable=False)
 
     parent: Optional["Category"] = Relationship(
         back_populates="children",

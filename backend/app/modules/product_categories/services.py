@@ -2,6 +2,7 @@ from sqlmodel import Session, select
 
 from app.modules.product_categories.models import ProductCategory
 from app.modules.product_categories.schemas import ProductCategoryCreate, ProductCategoryUpdate
+from datetime import datetime, timezone
 
 
 def create_product_category(session: Session, data: ProductCategoryCreate) -> ProductCategory:
@@ -35,8 +36,9 @@ def update_product_category(
     product_category = session.get(ProductCategory, (product_id, category_id))
     if product_category is None:
         return None
-
-    product_category.sqlmodel_update(data.model_dump(exclude_unset=True))
+    updates = data.model_dump(exclude_unset=True)
+    updates["updated_at"] = datetime.now(timezone.utc)
+    product_category.sqlmodel_update(updates)
     session.add(product_category)
     session.commit()
     session.refresh(product_category)

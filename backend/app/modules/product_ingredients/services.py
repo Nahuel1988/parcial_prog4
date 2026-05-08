@@ -2,6 +2,7 @@ from sqlmodel import Session, select
 
 from app.modules.product_ingredients.models import ProductIngredient
 from app.modules.product_ingredients.schemas import ProductIngredientCreate, ProductIngredientUpdate
+from datetime import datetime, timezone
 
 
 def create_product_ingredient(session: Session, data: ProductIngredientCreate) -> ProductIngredient:
@@ -35,8 +36,9 @@ def update_product_ingredient(
     product_ingredient = session.get(ProductIngredient, (product_id, ingredient_id))
     if product_ingredient is None:
         return None
-
-    product_ingredient.sqlmodel_update(data.model_dump(exclude_unset=True))
+    updates = data.model_dump(exclude_unset=True)
+    updates["updated_at"] = datetime.now(timezone.utc)
+    product_ingredient.sqlmodel_update(updates)
     session.add(product_ingredient)
     session.commit()
     session.refresh(product_ingredient)

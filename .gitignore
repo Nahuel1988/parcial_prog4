@@ -1,0 +1,72 @@
+# ---- Python ----
+__pycache__/
+*.py[codp]
+*$py.class
+.venv/
+venv/
+env/
+env.bak/
+backend/.venv/
+
+# Byte-compiled / optimized / DLL files
+*.pyc
+*.pyo
+*.pyd
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+pip-wheel-metadata/
+.eggs/
+
+# Unit test / coverage
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# SQL
+*.db
+*.sqlite3
+*.sqlite
+
+# Logs
+logs/
+*.log
+
+# Environment variables
+.env
+.env.*
+
+# ---- Node/Frontend ----
+node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+frontend/.parcel-cache/
+frontend/.vite/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ---- IDE / OS ----
+.vscode/
+.idea/
+*.suo
+*.user
+*.sln
+*.swp
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# OneDrive / temp
+~$*
+
+# Ignore compiled caches created by Python modules
+**/__pycache__/
+**/*.pyc
+
+# Optional: local VSCode workspace settings
+.vscode/settings.json

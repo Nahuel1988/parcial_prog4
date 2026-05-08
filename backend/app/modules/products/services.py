@@ -5,6 +5,7 @@ from app.modules.products.models import Product
 from app.modules.products.schemas import ProductCreate, ProductUpdate
 from app.modules.product_categories.models import ProductCategory
 from app.modules.product_ingredients.models import ProductIngredient
+from datetime import datetime, timezone
 
 
 def _product_query():
@@ -36,8 +37,9 @@ def update_product(session: Session, product_id: int, data: ProductUpdate) -> Pr
     product = session.get(Product, product_id)
     if product is None:
         return None
-
     updates = data.model_dump(exclude_unset=True)
+    # update timestamp
+    updates["updated_at"] = datetime.now(timezone.utc)
     product.sqlmodel_update(updates)
     session.add(product)
     session.commit()

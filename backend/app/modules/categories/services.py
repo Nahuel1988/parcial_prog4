@@ -2,6 +2,7 @@ from sqlmodel import Session, select
 
 from app.modules.categories.models import Category
 from app.modules.categories.schemas import CategoryCreate, CategoryUpdate
+from datetime import datetime, timezone
 
 
 def create_category(session: Session, data: CategoryCreate) -> Category:
@@ -25,8 +26,8 @@ def update_category(session: Session, category_id: int, data: CategoryUpdate) ->
     category = session.get(Category, category_id)
     if category is None:
         return None
-
     updates = data.model_dump(exclude_unset=True)
+    updates["updated_at"] = datetime.now(timezone.utc)
     category.sqlmodel_update(updates)
     session.add(category)
     session.commit()

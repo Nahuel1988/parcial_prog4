@@ -1,4 +1,5 @@
 from typing import Optional
+from datetime import datetime, timezone
 
 from sqlmodel import Field, Relationship, SQLModel
 
@@ -14,6 +15,8 @@ class Product(SQLModel, table=True):
     imagenes_url: Optional[str] = Field(default=None)
     stock_cantidad: int = Field(default=0, ge=0)
     disponible: bool = Field(default=True)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), nullable=False)
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), nullable=False)
 
     category_links: list["ProductCategory"] = Relationship(back_populates="product")
     ingredient_links: list["ProductIngredient"] = Relationship(back_populates="product")
