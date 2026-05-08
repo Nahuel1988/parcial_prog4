@@ -103,3 +103,5 @@ Validaciones y relaciones
 
 Persistencia en PostgreSQL
 
+Nota: se eliminó el endpoint raíz `GET /` (tag `General`) del backend porque no cumplía ninguna función operativa; la API expone únicamente los endpoints de dominio (categorías, ingredientes, productos y sus relaciones).
+
