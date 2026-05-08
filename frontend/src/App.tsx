@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom'
 import { NavLink, Route, Routes } from 'react-router-dom'
 import { ProductDetailPage } from './features/products/ProductDetailPage'
 import { ProductsPage } from './features/products/ProductsPage'
+import { CategoriesPage } from './features/categories/CategoriesPage'
+import { IngredientsPage } from './features/ingredients/IngredientsPage'
 
 function App() {
   // Minimal app for Domain 2 (Catálogo de Productos)
@@ -38,14 +40,8 @@ function App() {
         <Routes>
           <Route path="/" element={<ProductsPage isAdmin={isAdmin} />} />
           <Route path="/detalle/:id" element={<ProductDetailPage />} />
-          <Route
-            path="/categorias"
-            element={<section className="py-8"><h2 className="text-xl font-semibold">Categorías</h2><p className="text-sm text-slate-600">Módulo de categorías (Domain 2).</p></section>}
-          />
-          <Route
-            path="/ingredientes"
-            element={<section className="py-8"><h2 className="text-xl font-semibold">Ingredientes</h2><p className="text-sm text-slate-600">Módulo de ingredientes (Domain 2).</p></section>}
-          />
+          <Route path="/categorias" element={<CategoriesPage />} />
+          <Route path="/ingredientes" element={<IngredientsPage />} />
         </Routes>
       </main>
     </div>
