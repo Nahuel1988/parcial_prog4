@@ -1,32 +1,12 @@
-import { useEffect, useState } from 'react'
-import { Link, NavLink, Route, Routes } from 'react-router-dom'
-import { LoginPage, type LoggedUser } from './pages/LoginPage'
+import { Link } from 'react-router-dom'
+import { NavLink, Route, Routes } from 'react-router-dom'
 import { ProductDetailPage } from './features/products/ProductDetailPage'
 import { ProductsPage } from './features/products/ProductsPage'
-import { UsersPage } from './pages/UsersPage'
-import { OrdersPage } from './pages/OrdersPage'
-import type { UserRead } from './types/api'
 
 function App() {
-  const [currentUser, setCurrentUser] = useState<LoggedUser | null>(() => {
-    const raw = localStorage.getItem('currentUser')
-    if (!raw) return null
-    try {
-      return JSON.parse(raw) as LoggedUser
-    } catch {
-      return null
-    }
-  })
-
-  useEffect(() => {
-    if (currentUser) {
-      localStorage.setItem('currentUser', JSON.stringify(currentUser))
-    } else {
-      localStorage.removeItem('currentUser')
-    }
-  }, [currentUser])
-
-  const isAdmin = currentUser?.rol_id === 1
+  // Minimal app for Domain 2 (Catálogo de Productos)
+  // Auth and user management removed for domain-focused UI.
+  const isAdmin = true
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top_right,_rgba(15,82,56,0.12)_0%,_transparent_24%),_radial-gradient(circle_at_20%_20%,_rgba(252,138,64,0.08)_0%,_transparent_18%),_linear-gradient(180deg,_#f7faf6_0%,_#ecf3ef_100%)]">
@@ -41,73 +21,30 @@ function App() {
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
-            {currentUser ? (
-              <>
-                <span className="rounded-full bg-[#ebf5ed] px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[#2c533c]">
-                  {currentUser.nombre} {currentUser.apellido ?? ''}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => setCurrentUser(null)}
-                  className="secondary-btn text-sm"
-                >
-                  Cerrar sesión
-                </button>
-              </>
-            ) : (
-              <NavLink
-                to="/login"
-                className={({ isActive }) =>
-                  [
-                    'secondary-btn text-sm',
-                    isActive ? 'bg-[#2d6a4f] text-white' : 'bg-[#f7faf3] text-[#1c2921]',
-                  ].join(' ')
-                }
-              >
-                Iniciar sesión
-              </NavLink>
-            )}
+            <NavLink to="/" className="secondary-btn text-sm">
+              Productos
+            </NavLink>
           </div>
         </div>
 
         <div className="mx-auto flex max-w-6xl flex-wrap gap-2 px-4 pb-4">
-          {isAdmin && <NavItem to="/">Productos</NavItem>}
-          <NavItem to="/ventas">Ventas</NavItem>
-          {isAdmin && <NavItem to="/usuarios">Usuarios</NavItem>}
+          <NavItem to="/">Productos</NavItem>
+          <NavItem to="/categorias">Categorías</NavItem>
+          <NavItem to="/ingredientes">Ingredientes</NavItem>
         </div>
       </header>
 
       <main className="mx-auto max-w-6xl px-4 py-8">
         <Routes>
-          <Route path="/login" element={<LoginPage onLogin={setCurrentUser} />} />
-          <Route
-            path="/"
-            element={
-              !currentUser ? (
-                <LoginPage onLogin={setCurrentUser} />
-              ) : isAdmin ? (
-                <ProductsPage isAdmin={true} />
-              ) : (
-                <OrdersPage currentUser={currentUser} />
-              )
-            }
-          />
+          <Route path="/" element={<ProductsPage isAdmin={isAdmin} />} />
           <Route path="/detalle/:id" element={<ProductDetailPage />} />
           <Route
-            path="/usuarios"
-            element={
-              !currentUser ? (
-                <LoginPage onLogin={setCurrentUser} />
-              ) : isAdmin ? (
-                <UsersPage />
-              ) : (
-                <AccessDenied />
-              )
-            }
+            path="/categorias"
+            element={<section className="py-8"><h2 className="text-xl font-semibold">Categorías</h2><p className="text-sm text-slate-600">Módulo de categorías (Domain 2).</p></section>}
           />
           <Route
-            path="/ventas"
-            element={!currentUser ? <LoginPage onLogin={setCurrentUser} /> : <OrdersPage currentUser={currentUser} />}
+            path="/ingredientes"
+            element={<section className="py-8"><h2 className="text-xl font-semibold">Ingredientes</h2><p className="text-sm text-slate-600">Módulo de ingredientes (Domain 2).</p></section>}
           />
         </Routes>
       </main>
